@@ -2,6 +2,7 @@
 
 import os
 import sys
+import json
 import string
 import random
 import argparse
@@ -578,6 +579,13 @@ if __name__ == "__main__":
         help="The output directory where the results will be stored."
     )
 
+    parser.add_argument(
+        '--reschedule', 
+        default=False, 
+        action='store_true', 
+        help="Reschedule partially assigned sessions."
+    )
+
     # Parse the command line arguments
     args = parser.parse_args()
 
@@ -585,6 +593,17 @@ if __name__ == "__main__":
     df_avails = read_availability(args.availability_file)
     df_signup = read_signup(args.signup_file)
     entries = read_entries(args.entry_file)
+
+    # Read partially assigned sessions (if any)
+    if args.reschedule:
+        with open("/Users/radu/git/NAC/data/session1.json") as f:
+            SESSION_AM = json.load(f)
+            SESSION_AM = {k: v for k, v in SESSION_AM.items() if len(v) > 0}
+            f.close()
+        with open("/Users/radu/git/NAC/data/session2.json") as f:
+            SESSION_PM = json.load(f)
+            SESSION_PM = {k: v for k, v in SESSION_PM.items() if len(v) > 0}
+            f.close()
 
     make_schedule(availability=df_avails, signups=df_signup, entries=entries)
 
