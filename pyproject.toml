@@ -1,0 +1,33 @@
+[build-system]
+requires = [
+    "setuptools>=60",
+    "setuptools-scm>=8.0"]
+
+[project]
+name = "nac"
+dynamic = ["version"]
+description = "NAC Gala Scheduler"
+license = {text = "Apache-2.0"}
+readme = "README.md"
+requires-python = ">=3.10"
+classifiers=[
+    "License :: OSI Approved :: Apache Software License"
+]
+dependencies = [
+    # TODO: loosen dependencies
+    "tqdm>=4.65.0",
+    "numpy",
+    "pandas",
+    "pypdf"
+]
+
+[tool.setuptools.packages.find]
+exclude = ["tests", "tests.*"]
+namespaces = false
+
+
+[tool.setuptools_scm]
+version_file = "src/version.py"
+
+[project.urls]
+Source = "https://github.ibm.com/IBM-Research-AI/fm-sherpas"
