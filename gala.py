@@ -220,8 +220,10 @@ def is_available_for_session(candidate: str, session: str, cutoff: int, entries:
 
     for i, line in enumerate(entries):
         if not line.startswith("# "): # swimmer
-            temp = line.split()[:-1]
-            swimmer = " ".join(temp)
+            temp = line.split(',')
+            last_name = temp[0]
+            first_names = temp[1].split()
+            swimmer = ", ".join([last_name, first_names[0]])
             if swimmer.startswith("Mc "):
                 swimmer = swimmer[:2] + swimmer[3:]
             swimmer = string.capwords(swimmer)
@@ -329,6 +331,8 @@ def make_schedule(availability: pd.DataFrame, signups: pd.DataFrame, entries: Li
     used_names = set()
     for val in list(SESSION_AM.values()):
         used_names.add(string.capwords(val))
+    for val in list(SESSION_PM.values()):
+        used_names.add(string.capwords(val))
 
     random.shuffle(candidates)
     print(f"Available candidates: {len(candidates)}")
@@ -401,7 +405,7 @@ def make_schedule(availability: pd.DataFrame, signups: pd.DataFrame, entries: Li
     if len(SESSION_AM) < len(ROLES):
         print(f"Roles remaining after AM+PM availability: {len(ROLES) - len(SESSION_AM)}")
         print(f"Selecting candidates from the SIGNUPS pool")
-        candidates = deepcopy(assignables)
+        candidates = list(deepcopy(assignables))
         random.shuffle(candidates)
         for role in ROLES:
             if role not in SESSION_AM:
@@ -513,7 +517,7 @@ def make_schedule(availability: pd.DataFrame, signups: pd.DataFrame, entries: Li
     # Check if all roles in SESSION_AM are filled
     if len(SESSION_PM) < len(ROLES):
         print(f"Roles remaining after AM+PM availability: {len(ROLES) - len(SESSION_PM)}")
-        print(f"Selecting candidates from the SIGNUPS pool")
+        print(f"Selecting candidates from the SIGNUPS pool: {len(assignables)}")
         candidates = list(deepcopy(assignables))
         random.shuffle(candidates)
         for role in ROLES:
@@ -548,7 +552,7 @@ def make_schedule(availability: pd.DataFrame, signups: pd.DataFrame, entries: Li
 
 if __name__ == "__main__":
 
-    set_seed(42)
+    set_seed(442)
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
