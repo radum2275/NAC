@@ -15,8 +15,8 @@ from pypdf import PdfReader
 from difflib import SequenceMatcher
 from copy import deepcopy
 
-def similarity(a, b):
-    return SequenceMatcher(None, a, b).ratio()
+def similarity(a: str, b: str) -> float:
+    return SequenceMatcher(None, a.lower(), b.lower()).ratio()
 
 ROLES = [
     "DTK",
@@ -148,7 +148,6 @@ TEAM_MANAGERS = [
     "Radu Marinescu",
     "Mags Connelly",
     "Paul O'Neill",
-    "Teresa Martin",
     "Ana Melnicova",
     "Anne Lynam",
     "Michelle McCormack",
@@ -159,7 +158,7 @@ TM_TO_SWIMMER = {
     "Teresa Martin": ["Martin, Kenny", "Martin, Maisie"],
     "Peter Hussey": ["Walsh-Hussey, Hannah"],
     "Sinead Scully": ["Scully, Emily"],
-    "Andrea O'Doherty": ["O'Donoghue, Leah"],
+    "Andrea O'Doherty": ["O'Doherty, Luke"],
     "Orna Kiernan": ["Byrne, Ribh", "Byrne, Fionn"],
     "Eoin O'Donoghue": ["O'Donoghue, Shane"],
     "Radu Marinescu": ["Marinescu, Ioachim", "Marinescu, Yohan"],
@@ -167,30 +166,36 @@ TM_TO_SWIMMER = {
     "Paul O'Neill": ["O'Neill, Cian", "O'Neill, Daire"],
     "Ana Melnicova": ["Melnicova, Maria"],
     "Anne Lynam": ["Lynam, Daniel"],
+    "Laura Staicu": ["Staicu, Thea"],
     "Michelle McCormack": ["McCormack, Sophie"],
 }
 
 # Session 1 AM -- seeded with initial preferences
 SESSION_AM = {
     "PA": "Karen Jennings",
-    "TM1": "Aoife Genocchi",
-    "TM2": "Peter Hussey",
+    "TM1": "Laura Staicu",
+    "TM2": "Laura Staicu",
+    "DESK": "Anne Lynam",
     "RESULTS": "Radu Marinescu",
-    "MEDALS": "Annabel Farrington-Knight",
-    "TAKEDOWN": "xxxxxxxxxxxxxxxxx",
-    "TJ0": "Rinah Ho",
+    "MEDALS": "Orna Kiernan",
+    "RAFFLE": "Teresa Martin",
+    "TJ9": "Old Hellen",
+    "TAKEDOWN": "xxx"
 }
 
 # Session 2 AM -- seeded with initial preferences
 SESSION_PM = {
     "PA": "Karen Jennings",
-    "TM1": "Teresa Martin",
-    "TM2": "Michelle McCormack",
+    "TM1": "Sinead Scully",
+    "TM2": "Sinead Scully",
+    "DESK": "Anne Lynam",
     "RESULTS": "Radu Marinescu",
-    "TK0": "Barbara Stanczak",
+    "MEDALS": "Annabel Farrington-Knight",
+    "RAFFLE": "Orna Kiernan",
+    "TAKEDOWN": "Robert Trinchinet",    
 }
 
-SESSION_CUTOFF = 15
+SESSION_CUTOFF = 14
 
 def to_name(athlete: str):
     temp = athlete.split(',')
@@ -223,11 +228,15 @@ def is_available_for_session(candidate: str, session: str, cutoff: int, entries:
             temp = line.split(',')
             last_name = temp[0]
             first_names = temp[1].split()
+            # if len(first_names) >= 3:
+            #     first_name = first_names[0] + " " + first_names[1]
+            # else:
+            #     first_name = first_names[0]
             swimmer = ", ".join([last_name, first_names[0]])
             if swimmer.startswith("Mc "):
                 swimmer = swimmer[:2] + swimmer[3:]
             swimmer = string.capwords(swimmer)
-            if similarity(swimmer, candidate) >= 0.9:
+            if similarity(swimmer, candidate) >= 0.8:
                 j = i + 1
                 stop = False
                 while not stop:
@@ -283,6 +292,7 @@ def make_schedule(availability: pd.DataFrame, signups: pd.DataFrame, entries: Li
     """
     Create the gala schedule by filling in the partially scheduled sessions.
     """  
+    # print(similarity('Doner, Emin', 'Doner, Emin Bera'))
 
     # Get all event signups that can be assigned (flag Notes is Y)
     mask = signups['Notes'] == "Y"
@@ -309,6 +319,44 @@ def make_schedule(availability: pd.DataFrame, signups: pd.DataFrame, entries: Li
                     None
     print(f"Assignables: {len(assignables)}")
 
+    swimmers_am = [] # am only
+    swimmers_pm = [] # pm only
+    swimmers_both = [] # both
+    swimmers_none = []
+    for swimmer in assignables:
+        sessions = []
+        if is_available_for_session(swimmer, "am", SESSION_CUTOFF, entries):
+            sessions.append("AM")
+        if is_available_for_session(swimmer, "pm", SESSION_CUTOFF, entries):
+            sessions.append("PM")
+        print(f"{swimmer} is available for: {sessions}")
+
+        if len(sessions) == 2:
+            swimmers_both.append(swimmer)
+        elif len(sessions) == 1:
+            if sessions[0] == 'AM':
+                swimmers_am.append(swimmer)
+            else:
+                swimmers_pm.append(swimmer)
+        else:
+            swimmers_none.append(swimmer)
+
+    print(f"Swimmers AM only: {len(swimmers_am)}")
+    for swimmer in swimmers_am:
+        print(swimmer)
+    print("\n")
+    print(f"Swimmers PM only: {len(swimmers_pm)}")
+    for swimmer in swimmers_pm:
+        print(swimmer)
+    print("\n")
+    print(f"Swimmers AM+PM: {len(swimmers_both)}")
+    for swimmer in swimmers_both:
+        print(swimmer)
+    print("\n")
+    print(f"Swimmers NONE: {len(swimmers_none)}")
+    for swimmer in swimmers_none:
+        print(swimmer)
+
     # Schedule Session 1 (AM). Assign first the roles marked as "Session 1 AM" in
     # the availability dataframe. If not all roles filled, pull from the the 
     # availability df those available for both sessions. Then pull from event
@@ -325,6 +373,8 @@ def make_schedule(availability: pd.DataFrame, signups: pd.DataFrame, entries: Li
     print(f"[NAC] AM+PM availability  : {avails_both.shape[0]}")
     print(f"AM only: {[string.capwords(s) for s in avails_am['Athlete'].to_list()]}")
     print(f"PM only: {[string.capwords(s) for s in avails_pm['Athlete'].to_list()]}")
+
+    sys.exit(1)
 
     print(f"[NAC] Scheduling AM only roles")
     candidates = [string.capwords(s) for s in avails_am['Athlete'].to_list()]
