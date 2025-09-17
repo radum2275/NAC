@@ -44,11 +44,31 @@ def set_seed(seed: int):
     random.seed(seed)
 
 SESSIONS = {
-    "S1": [1, 2, 3, 4, 5, 6, 7, 8, 9],
-    "S2": [13, 14, 15, 16, 17, 18, 20],
-    "S3": [21, 22, 23, 24, 25, 26, 27],
-    "S4": [12, 30, 31, 32, 33, 34, 35, 36, 38]
+    "S1": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+    "S2": [14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28],
 }
+
+
+# SESSIONS = {
+#     "S1": [1, 2, 3, 4, 5],
+#     "S3": [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19],
+#     "S5": [22, 23, 25, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35],
+# }
+
+# SESSIONS = {
+#     "S1": [101, 102, 103, 104, 105, 106],
+#     "S2": [201, 202, 203, 204, 205, 206],
+#     "S3": [301, 302, 303, 304, 305, 306],
+#     "S4": [401, 402, 403, 404, 405, 406],
+#     "S5": [501, 502, 503, 504, 505],
+#     "S6": [601, 602, 603, 604, 605],
+# }
+
+
+def ends_with_letter(s):
+    if len(s) == 0:
+        return False
+    return s[-1].isalpha()
 
 def swimmers_per_session(session_events: List[int], entries: List[str]):
     """
@@ -73,7 +93,11 @@ def swimmers_per_session(session_events: List[int], entries: List[str]):
             while not stop:
                 event = entries[j]
                 assert event.startswith("# ")
-                ev = int(event.split()[1][:-1])
+                ev_name = event.split()[1]
+                if ends_with_letter(ev_name):
+                    ev = int(ev_name[:-1])
+                else:
+                    ev = int(ev_name)
                 if ev in session_events:
                     available_swimmers.append(swimmer)
                     stop = True
@@ -112,6 +136,7 @@ if __name__ == "__main__":
         session_events = SESSIONS[s]
         print(f"[NAC] SESSION {s} (events: {session_events})")
         swimmers = swimmers_per_session(session_events, entries)
+        # random.shuffle(swimmers)
         print(f"[NAC] Available swimmers: {len(swimmers)}")
         for swimmer in swimmers:
             print(f"   - {swimmer}")
