@@ -1,19 +1,14 @@
 # Preprocessing script for Leinster galas
 
-import os
-import sys
-import json
 import string
 import random
 import argparse
 from typing import List
-import pandas as pd
 import numpy as np
 
 from pypdf import PdfReader
 
 from difflib import SequenceMatcher
-from copy import deepcopy
 
 def similarity(a, b):
     return SequenceMatcher(None, a, b).ratio()
@@ -44,16 +39,15 @@ def set_seed(seed: int):
     random.seed(seed)
 
 SESSIONS = {
-    "S1": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
-    "S2": [14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28],
+    "S1": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18],
+    "S2": [19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41],
 }
 
 
 # SESSIONS = {
-#     "S1": [1, 2, 3, 4, 5, 6, 7, 8, 9],
-#     "S2": [10, 11, 12, 13, 14, 15, 16, 17],
-#     "S3": [18, 19, 20, 21, 22, 23, 24],
-#     "S4": [25, 25, 26, 27, 28, 29, 30, 31, 32]
+#     "S1": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+#     "S2": [14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27],
+#     "S3": [28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41],
 # }
 
 # SESSIONS = {

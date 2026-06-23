@@ -52,25 +52,6 @@ ROLES = [
     "TAKEDOWN",
 ]
 
-ROLE_WITH_EXPERIENCE = [
-    "LINEUP1",
-    "LINEUP2",
-    "DESK"
-]
-
-NOVICE_SQUADS = [
-    "Skills Squad", 
-    "Development Squad"
-]
-
-EXPERIENCED_SQUADS = [
-    "Age Group Squad", 
-    "Development Squad Plus", 
-    "Performance Pathway Squad", 
-    "Performance Pathway Squad Plus",
-    "Performance Squad"
-]
-
 # Set the random seed globally
 def set_seed(seed: int):
     np.random.seed(seed)
@@ -153,26 +134,26 @@ TEAM_MANAGERS = [
     "Michelle McCormack",
 ]
 
-TM_TO_SWIMMER = {
-    "Aoife Genocchi": ["Genocchi, Cillian", "Genocchi, Alicia"],
-    "Teresa Martin": ["Martin, Kenny", "Martin, Maisie"],
-    "Peter Hussey": ["Walsh-Hussey, Hannah"],
-    "Sinead Scully": ["Scully, Emily"],
-    "Andrea O'Doherty": ["O'Doherty, Luke"],
-    "Orna Kiernan": ["Byrne, Ribh", "Byrne, Fionn"],
-    "Eoin O'Donoghue": ["O'Donoghue, Shane"],
-    "Radu Marinescu": ["Marinescu, Ioachim", "Marinescu, Yohan"],
-    "Mags Connelly": ["Driver, Seana"],
-    "Paul O'Neill": ["O'Neill, Cian", "O'Neill, Daire"],
-    "Ana Melnicova": ["Melnicova, Maria"],
-    "Anne Lynam": ["Lynam, Daniel"],
-    "Laura Staicu": ["Staicu, Thea"],
-    "Michelle McCormack": ["McCormack, Sophie"],
-}
+SKIP_SWIMMERS = [
+    "Genocchi, Cillian",
+    "Genocchi, Alicia",
+    "Martin, Kenny",
+    "Martin, Maisie",
+    "Byrne, Ribh",
+    "Byrne, Fionn",
+    "Marinescu, Ioachim",
+    "Marinescu, Yohan",
+    "Driver, Seana",
+    "O'Neill, Cian",
+    "O'Neill, Daire",
+    "Lynam, Daniel",
+    "Staicu, Thea",
+]
+
 
 # Session 1 AM -- seeded with initial preferences
 SESSION_AM = {
-    "PA": "Karen Jennings",
+    "PA": "Orna Kiernan",
     "TM1": "Laura Staicu",
     "TM2": "Laura Staicu",
     "DESK": "Anne Lynam",
@@ -185,14 +166,13 @@ SESSION_AM = {
 
 # Session 2 AM -- seeded with initial preferences
 SESSION_PM = {
-    "PA": "Karen Jennings",
+    "PA": "Orna Kiernan",
     "TM1": "Sinead Scully",
     "TM2": "Sinead Scully",
     "DESK": "Anne Lynam",
     "RESULTS": "Radu Marinescu",
     "MEDALS": "Annabel Farrington-Knight",
-    "RAFFLE": "Orna Kiernan",
-    "TAKEDOWN": "Robert Trinchinet",    
+    "RAFFLE": "Teresa Martin",
 }
 
 SESSION_CUTOFF = 14
